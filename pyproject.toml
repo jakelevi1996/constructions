@@ -5,6 +5,3 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "constructions"
 version = "0.0.1"
-
-[tool.setuptools.package-dir]
-constructions = "src"
