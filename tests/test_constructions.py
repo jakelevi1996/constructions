@@ -24,7 +24,7 @@ def test_plot():
         *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d]],
         *[line.plot(c="b") for line in [ab_line, cd_line]],
         *[
-            cn.Circle(a, cn.l2_sq(x.coords - a.coords)).plot(c="c")
+            cn.Circle(a, a.l2_sq_distance(x)).plot(c="m")
             for x in [b, c, d]
         ],
         figsize=[8, 6],
