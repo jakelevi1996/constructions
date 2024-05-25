@@ -6,10 +6,11 @@ def dot(x, y):
     return x.T * y
 
 def l2_sq(x):
-    return x.T * x
+    [y] = x.T * x
+    return y
 
 def l2(x):
-    return sp.sqrt(x.T * x)
+    return sp.sqrt(l2_sq(x))
 
 class Point:
     def __init__(self, coords_matrix):
