@@ -35,3 +35,6 @@ class Circle:
     def __init__(self, centre_point, r_sq):
         self.centre = centre_point.coords
         self.r_sq = r_sq
+
+    def plot(self, **kwargs):
+        return plotting.Circle(self.centre, sp.sqrt(self.r_sq), **kwargs)
