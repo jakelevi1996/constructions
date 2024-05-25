@@ -21,9 +21,15 @@ def test_plot():
     cd_line = cn.Line(c, d)
 
     plotting.plot(
-        *[p.plot(c="r", zorder=20) for p in [a, b, c, d]],
+        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d]],
         *[line.plot(c="b") for line in [ab_line, cd_line]],
+        *[
+            cn.Circle(a, cn.l2_sq(x.coords - a.coords)).plot(c="c")
+            for x in [b, c, d]
+        ],
         figsize=[8, 6],
+        xlim=[-20, 20],
+        ylim=[-20, 20],
         axis_equal=True,
         plot_name="test_plot",
         dir_name=RESULTS_DIR,
