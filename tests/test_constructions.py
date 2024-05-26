@@ -2,6 +2,7 @@ import os
 import math
 import sympy as sp
 import numpy as np
+import pytest
 from jutility import plotting, util
 import constructions as cn
 
@@ -58,3 +59,15 @@ def test_repr():
     printer(a, b, c, d,   sep="\n", end="\n\n")
     printer(*lines,       sep="\n", end="\n\n")
     printer(*circles,     sep="\n", end="\n\n")
+
+@pytest.mark.parametrize("seed", range(3))
+def test_line_contains_point(seed):
+    test_name = "test_line_contains_point_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    a, b = [random_point(rng) for _ in range(2)]
+    line = cn.Line(a, b)
+    alpha = random_rational(rng, 1.1, 1.9)
+    c = cn.Point(a.coords + alpha * line.bma)
+    assert line.contains_point(c)

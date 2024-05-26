@@ -3,14 +3,14 @@ import numpy as np
 from jutility import plotting
 
 def dot(x, y):
-    return x.T * y
+    [z] = x.T * y
+    return z
 
 def l2_sq(x):
-    [y] = x.T * x
-    return y
+    return dot(x, x)
 
 def l2(x):
-    return sp.sqrt(l2_sq(x))
+    return sp.sqrt(dot(x, x))
 
 class Point:
     def __init__(self, coords_matrix):
@@ -31,6 +31,15 @@ class Line:
         self.b = b_point.coords
         self.bma = self.b - self.a
         self.bma_l2_sq = l2_sq(self.bma)
+
+    def project_point(self, point):
+        alpha = dot(point.coords - self.a, self.bma) / self.bma_l2_sq
+        m = self.a + alpha * self.bma
+        return m
+
+    def contains_point(self, point):
+        m = self.project_point(point)
+        return m == point.coords
 
     def plot(self, **kwargs):
         a = np.array(self.a).flatten().astype(float)
