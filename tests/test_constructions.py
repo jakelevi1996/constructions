@@ -27,6 +27,12 @@ def random_point(*args, **kwargs):
     p = cn.Point(m)
     return p
 
+def random_rotation(rng, cos_lo=-1, cos_hi=1, denom_lo=50, denom_hi=100):
+    c = random_rational(rng, cos_lo, cos_hi, denom_lo, denom_hi)
+    s = sp.sqrt(1 - c*c)
+    r = sp.Matrix([[c, -s], [s, c]])
+    return r
+
 def test_plot():
     rng = util.Seeder().get_rng("test_plot")
     a, b, c, d = [random_point(rng) for _ in range(4)]
@@ -71,3 +77,7 @@ def test_line_contains_point(seed):
     alpha = random_rational(rng, 1.1, 1.9)
     c = cn.Point(a.coords + alpha * line.bma)
     assert line.contains_point(c)
+
+    r = random_rotation(rng, cos_lo=0.1, cos_hi=0.3)
+    d = cn.Point(a.coords + alpha * (r * line.bma))
+    assert not line.contains_point(d)
