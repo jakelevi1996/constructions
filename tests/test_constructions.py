@@ -44,3 +44,17 @@ def test_plot():
         plot_name="test_plot",
         dir_name=RESULTS_DIR,
     )
+
+def test_repr():
+    rng = util.Seeder().get_rng("test_repr")
+    printer = util.Printer("test_repr", RESULTS_DIR)
+
+    a, b, c, d = [random_point(rng) for _ in range(4)]
+    lines = [cn.Line(a, b), cn.Line(c, d)]
+    circles = [
+        cn.Circle(a, a.l2_sq_distance(x))
+        for x in [b, c, d]
+    ]
+    printer(a, b, c, d,   sep="\n", end="\n\n")
+    printer(*lines,       sep="\n", end="\n\n")
+    printer(*circles,     sep="\n", end="\n\n")

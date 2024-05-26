@@ -22,6 +22,9 @@ class Point:
     def plot(self, **kwargs):
         return plotting.Scatter(*self.coords, **kwargs)
 
+    def __repr__(self):
+        return "Point(%s, %s)" % tuple(self.coords)
+
 class Line:
     def __init__(self, a_point, b_point):
         self.a = a_point.coords
@@ -34,6 +37,9 @@ class Line:
         b = np.array(self.b).flatten().astype(float)
         return plotting.AxLine(a, b, **kwargs)
 
+    def __repr__(self):
+        return "Line(through=[%s and %s])" % (tuple(self.a), tuple(self.b))
+
 class Circle:
     def __init__(self, centre_point, r_sq):
         self.centre = centre_point.coords
@@ -41,3 +47,7 @@ class Circle:
 
     def plot(self, **kwargs):
         return plotting.Circle(self.centre, sp.sqrt(self.r_sq), **kwargs)
+
+    def __repr__(self):
+        r = sp.sqrt(self.r_sq)
+        return "Circle(centre=%s, r=%s)" % (tuple(self.centre), r)
