@@ -81,3 +81,13 @@ def test_line_contains_point(seed):
     r = random_rotation(rng, cos_lo=0.1, cos_hi=0.3)
     d = cn.Point(a.coords + alpha * (r * line.bma))
     assert not line.contains_point(d)
+
+    printer(a, b, c, d, alpha, r, sep="\n")
+    plotting.plot(
+        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d]],
+        line.plot(c="b"),
+        cn.Circle(a, a.l2_sq_distance(c)).plot(c="m"),
+        axis_equal=True,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
