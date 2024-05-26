@@ -111,6 +111,8 @@ def test_line_project_point(seed):
     assert c.l2_sq_distance(m) < c.l2_sq_distance(cn.Point(m.coords + eps))
     assert c.l2_sq_distance(m) < c.l2_sq_distance(cn.Point(m.coords - eps))
 
+    assert line.is_direction_orthogonal(m.coords - c.coords)
+
     printer(a, b, line, alpha, r, c, m, eps, sep="\n")
     plotting.plot(
         *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, m]],

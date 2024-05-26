@@ -41,6 +41,9 @@ class Line:
         m = self.project_point(point).coords
         return sp.simplify(m - point.coords) == sp.zeros(2, 1)
 
+    def is_direction_orthogonal(self, d):
+        return sp.simplify(dot(d, self.bma)) == 0
+
     def plot(self, **kwargs):
         a = np.array(self.a).flatten().astype(float)
         b = np.array(self.b).flatten().astype(float)
