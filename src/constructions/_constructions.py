@@ -38,7 +38,8 @@ class Line:
         return m_point
 
     def contains_point(self, point):
-        return self.project_point(point).coords == point.coords
+        m = self.project_point(point).coords
+        return sp.simplify(m - point.coords) == sp.zeros(2, 1)
 
     def plot(self, **kwargs):
         a = np.array(self.a).flatten().astype(float)
