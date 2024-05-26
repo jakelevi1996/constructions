@@ -38,8 +38,8 @@ class Line:
         return m_point
 
     def contains_point(self, point):
-        m = self.project_point(point).coords
-        return sp.simplify(m - point.coords) == sp.zeros(2, 1)
+        m = self.project_point(point)
+        return sp.simplify(m.l2_sq_distance(point)) == 0
 
     def is_direction_orthogonal(self, d):
         return sp.simplify(dot(d, self.bma)) == 0
