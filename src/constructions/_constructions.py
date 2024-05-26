@@ -34,12 +34,11 @@ class Line:
 
     def project_point(self, point):
         alpha = dot(point.coords - self.a, self.bma) / self.bma_l2_sq
-        m = self.a + alpha * self.bma
-        return m
+        m_point = Point(self.a + alpha * self.bma)
+        return m_point
 
     def contains_point(self, point):
-        m = self.project_point(point)
-        return m == point.coords
+        return self.project_point(point).coords == point.coords
 
     def plot(self, **kwargs):
         a = np.array(self.a).flatten().astype(float)

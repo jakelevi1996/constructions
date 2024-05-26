@@ -91,3 +91,32 @@ def test_line_contains_point(seed):
         plot_name=test_name,
         dir_name=RESULTS_DIR,
     )
+
+@pytest.mark.parametrize("seed", range(3))
+def test_line_project_point(seed):
+    test_name = "test_line_project_point_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    a, b = [random_point(rng) for _ in range(2)]
+    line = cn.Line(a, b)
+    alpha = random_rational(rng, 1.1, 1.9)
+    r = random_rotation(rng, cos_lo=0.3, cos_hi=0.6)
+    c = cn.Point(a.coords + alpha * (r * line.bma))
+    m = line.project_point(c)
+
+    assert line.contains_point(m)
+
+    eps = sp.Rational(1, 100) * line.bma
+    assert c.l2_sq_distance(m) < c.l2_sq_distance(cn.Point(m.coords + eps))
+    assert c.l2_sq_distance(m) < c.l2_sq_distance(cn.Point(m.coords - eps))
+
+    printer(a, b, line, alpha, r, c, m, eps, sep="\n")
+    plotting.plot(
+        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, m]],
+        line.plot(c="b"),
+        cn.Circle(c, c.l2_sq_distance(m)).plot(c="m"),
+        axis_equal=True,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
