@@ -132,3 +132,12 @@ def test_circle_contains_point(seed):
     r = random_rotation(rng, cos_lo=-0.5, cos_hi=0.5)
     c = cn.Point(a.coords + r * (b.coords - a.coords))
     assert circle.contains_point(c)
+
+    printer(a, b, circle, r, c, sep="\n")
+    plotting.plot(
+        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c]],
+        circle.plot(c="m"),
+        axis_equal=True,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
