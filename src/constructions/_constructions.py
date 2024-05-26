@@ -53,6 +53,9 @@ class Circle:
         self.centre = centre_point.coords
         self.r_sq = r_sq
 
+    def contains_point(self, point):
+        return Point(self.centre).l2_sq_distance(point) == self.r_sq
+
     def plot(self, **kwargs):
         return plotting.Circle(self.centre, sp.sqrt(self.r_sq), **kwargs)
 

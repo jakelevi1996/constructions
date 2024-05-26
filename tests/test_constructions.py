@@ -120,3 +120,15 @@ def test_line_project_point(seed):
         plot_name=test_name,
         dir_name=RESULTS_DIR,
     )
+
+@pytest.mark.parametrize("seed", range(3))
+def test_circle_contains_point(seed):
+    test_name = "test_circle_contains_point_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    a, b = [random_point(rng) for _ in range(2)]
+    circle = cn.Circle(a, a.l2_sq_distance(b))
+    r = random_rotation(rng, cos_lo=-0.5, cos_hi=0.5)
+    c = cn.Point(a.coords + r * (b.coords - a.coords))
+    assert circle.contains_point(c)
