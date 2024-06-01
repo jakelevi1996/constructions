@@ -2,6 +2,8 @@ import sympy as sp
 import numpy as np
 from jutility import plotting
 
+ROTATE_90 = sp.Matrix([[0, -1], [1, 0]])
+
 def dot(x, y):
     [z] = x.T * y
     return z

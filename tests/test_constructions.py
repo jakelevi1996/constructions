@@ -175,6 +175,25 @@ def test_line_project_point(seed):
     )
 
 @pytest.mark.parametrize("seed", range(3))
+def test_line_is_direction_orthogonal(seed):
+    test_name = "test_line_is_direction_orthogonal_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    line = random_line(rng)
+    alpha = random_rational(rng, 1.1, 1.9)
+    d1 = alpha * cn.ROTATE_90 * line.bma
+
+    assert line.is_direction_orthogonal(d1)
+
+    r = random_rotation(rng, cos_lo=0.3, cos_hi=0.6)
+    d2 = r * d1
+
+    assert not line.is_direction_orthogonal(d2)
+
+    printer(line, alpha, r, d1, d2, sep="\n")
+
+@pytest.mark.parametrize("seed", range(3))
 def test_circle_contains_point(seed):
     test_name = "test_circle_contains_point_%i" % seed
     rng = util.Seeder().get_rng(test_name)
