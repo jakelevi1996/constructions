@@ -135,9 +135,13 @@ def test_circle_contains_point(seed):
     c = cn.Point(a.coords + r * (b.coords - a.coords))
     assert circle.contains_point(c)
 
-    printer(a, b, circle, r, c, sep="\n")
+    alpha = random_rational(rng, 1.1, 1.9)
+    d = cn.Point(a.coords + alpha * r * (b.coords - a.coords))
+    assert not circle.contains_point(d)
+
+    printer(a, b, circle, r, c, d, sep="\n")
     plotting.plot(
-        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c]],
+        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d]],
         circle.plot(c="m"),
         axis_equal=True,
         plot_name=test_name,
