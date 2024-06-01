@@ -194,6 +194,37 @@ def test_line_is_direction_orthogonal(seed):
     printer(line, alpha, r, d1, d2, sep="\n")
 
 @pytest.mark.parametrize("seed", range(3))
+def test_line_is_parallel(seed):
+    test_name = "test_line_is_parallel%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    line1 = random_line(rng)
+    alpha = random_rational(rng, 1.1, 1.9)
+    beta  = random_rational(rng, 1.1, 1.9)
+    r1 = random_rotation(rng, cos_lo=0.3, cos_hi=0.6)
+    r2 = random_rotation(rng, cos_lo=0.3, cos_hi=0.6)
+    c = cn.Point(line1.a + alpha * r1 * line1.bma)
+    d = cn.Point(c.coords + beta * line1.bma)
+    e = cn.Point(c.coords + beta * r2 * line1.bma)
+    line2 = cn.Line(c, d)
+    line3 = cn.Line(c, e)
+
+    assert line1.is_line_parallel(line2)
+    assert not line1.is_line_parallel(line3)
+
+    a, b = line1.get_points()
+    plotting.plot(
+        *[line.plot(c="b") for line in [line1, line2, line3]],
+        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d, e]],
+        axis_equal=True,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
+
+    printer(a, b, c, d, e, line1, line2, line3, sep="\n")
+
+@pytest.mark.parametrize("seed", range(3))
 def test_circle_contains_point(seed):
     test_name = "test_circle_contains_point_%i" % seed
     rng = util.Seeder().get_rng(test_name)

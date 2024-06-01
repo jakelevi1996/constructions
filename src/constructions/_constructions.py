@@ -51,6 +51,14 @@ class Line:
     def is_direction_orthogonal(self, d):
         return sp.simplify(dot(d, self.bma)) == 0
 
+    def get_direction_orthogonal_component(self, d):
+        alpha = dot(d, self.bma) / self.bma_l2_sq
+        return d - alpha * self.bma
+
+    def is_line_parallel(self, line):
+        x = self.get_direction_orthogonal_component(line.bma)
+        return sp.simplify(l2_sq(x)) == 0
+
     def get_points(self):
         return Point(self.a), Point(self.b)
 
