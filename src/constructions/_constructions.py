@@ -65,6 +65,19 @@ class Line:
         alpha, _ = sp.Matrix([[self.bma, line.bma]]).solve(line.a - self.a)
         return [Point(self.a + alpha * self.bma)]
 
+    def get_intersection_circle(self, circle):
+        m = self.project_point(circle.centre)
+        alpha = (
+            (circle.r_sq - m.l2_sq_distance(circle.centre)) / self.bma_l2_sq
+        )
+        if alpha < 0:
+            return []
+        if alpha == 0:
+            return [m]
+
+        half_chord = sp.sqrt(alpha) * self.bma
+        return [Point(m.coords + half_chord), Point(m.coords - half_chord)]
+
     def get_points(self):
         return Point(self.a), Point(self.b)
 
@@ -78,18 +91,19 @@ class Line:
 
 class Circle:
     def __init__(self, centre_point, r_sq):
-        self.centre = centre_point.coords
+        self.centre = centre_point
         self.r_sq = sp.simplify(r_sq)
         if self.r_sq <= 0:
             raise ValueError("`r_sq` must be > 0, received %s" % self.r_sq)
 
     def contains_point(self, point):
-        centre_distance = Point(self.centre).l2_sq_distance(point)
+        centre_distance = self.centre.l2_sq_distance(point)
         return sp.simplify(centre_distance - self.r_sq) == 0
 
     def plot(self, **kwargs):
-        return plotting.Circle(self.centre, sp.sqrt(self.r_sq), **kwargs)
+        r = sp.sqrt(self.r_sq)
+        return plotting.Circle(self.centre.coords, r, **kwargs)
 
     def __repr__(self):
         r = sp.sqrt(self.r_sq)
-        return "Circle(centre=%s, r=%s)" % (tuple(self.centre), r)
+        return "Circle(centre=%s, r=%s)" % (tuple(self.centre.coords), r)
