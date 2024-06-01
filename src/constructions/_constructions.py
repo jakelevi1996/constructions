@@ -100,6 +100,23 @@ class Circle:
         centre_distance = self.centre.l2_sq_distance(point)
         return sp.simplify(centre_distance - self.r_sq) == 0
 
+    def get_intersection_circle(self, circle):
+        centre_disp = circle.centre.coords - self.centre.coords
+        cd_l2_sq = sp.simplify(l2_sq(centre_disp))
+        if cd_l2_sq == 0:
+            return []
+
+        alpha = (self.r_sq + cd_l2_sq - circle.r_sq) / (2 * cd_l2_sq)
+        m = self.centre.coords + alpha * centre_disp
+        beta = self.r_sq / cd_l2_sq - alpha * alpha
+        if beta < 0:
+            return []
+        if beta == 0:
+            return [Point(m)]
+
+        half_chord = sp.sqrt(beta) * (ROTATE_90 * centre_disp)
+        return [Point(m + half_chord), Point(m - half_chord)]
+
     def plot(self, **kwargs):
         r = sp.sqrt(self.r_sq)
         return plotting.Circle(self.centre.coords, r, **kwargs)
