@@ -59,6 +59,13 @@ class Line:
         x = self.get_direction_orthogonal_component(line.bma)
         return sp.simplify(l2_sq(x)) == 0
 
+    def get_intersection_line(self, line):
+        if self.is_line_parallel(line):
+            return []
+
+        alpha, _ = sp.Matrix([[self.bma, line.bma]]).solve(line.a - self.a)
+        return [Point(self.a + alpha * self.bma)]
+
     def get_points(self):
         return Point(self.a), Point(self.b)
 

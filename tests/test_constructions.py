@@ -194,8 +194,8 @@ def test_line_is_direction_orthogonal(seed):
     printer(line, alpha, r, d1, d2, sep="\n")
 
 @pytest.mark.parametrize("seed", range(3))
-def test_line_is_parallel(seed):
-    test_name = "test_line_is_parallel%i" % seed
+def test_line_get_intersection_line(seed):
+    test_name = "test_line_get_intersection_line%i" % seed
     rng = util.Seeder().get_rng(test_name)
     printer = util.Printer(test_name, RESULTS_DIR)
 
@@ -213,16 +213,29 @@ def test_line_is_parallel(seed):
     assert line1.is_line_parallel(line2)
     assert not line1.is_line_parallel(line3)
 
+    x12_list = line1.get_intersection_line(line2)
+    x13_list = line1.get_intersection_line(line3)
+
+    assert len(x12_list) == 0
+    assert len(x13_list) == 1
+
+    [x] = x13_list
+
+    assert line1.contains_point(x)
+    assert line3.contains_point(x)
+    assert not line2.contains_point(x)
+
     a, b = line1.get_points()
     plotting.plot(
         *[line.plot(c="b") for line in [line1, line2, line3]],
         *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d, e]],
+        x.plot(c="g", s=100, zorder=20),
         axis_equal=True,
         plot_name=test_name,
         dir_name=RESULTS_DIR,
     )
 
-    printer(a, b, c, d, e, line1, line2, line3, sep="\n")
+    printer(a, b, c, d, e, line1, line2, line3, x, sep="\n")
 
 @pytest.mark.parametrize("seed", range(3))
 def test_circle_contains_point(seed):
