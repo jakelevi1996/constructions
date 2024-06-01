@@ -195,7 +195,7 @@ def test_line_is_direction_orthogonal(seed):
 
 @pytest.mark.parametrize("seed", range(3))
 def test_line_get_intersection_line(seed):
-    test_name = "test_line_get_intersection_line%i" % seed
+    test_name = "test_line_get_intersection_line_%i" % seed
     rng = util.Seeder().get_rng(test_name)
     printer = util.Printer(test_name, RESULTS_DIR)
 
@@ -228,8 +228,8 @@ def test_line_get_intersection_line(seed):
     a, b = line1.get_points()
     plotting.plot(
         *[line.plot(c="b") for line in [line1, line2, line3]],
-        *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d, e]],
-        x.plot(c="g", s=100, zorder=20),
+        *[p.plot(c="g", s=100, zorder=20) for p in [a, b, c, d, e]],
+        x.plot(c="r", s=100, zorder=20),
         axis_equal=True,
         plot_name=test_name,
         dir_name=RESULTS_DIR,
