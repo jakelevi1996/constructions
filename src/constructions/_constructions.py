@@ -41,8 +41,7 @@ class Line:
 
     def project_point(self, point):
         alpha = dot(point.coords - self.a, self.bma) / self.bma_l2_sq
-        m_point = Point(self.a + alpha * self.bma)
-        return m_point
+        return Point(self.a + alpha * self.bma)
 
     def contains_point(self, point):
         m = self.project_point(point)
