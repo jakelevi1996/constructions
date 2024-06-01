@@ -44,6 +44,9 @@ class Line:
     def is_direction_orthogonal(self, d):
         return sp.simplify(dot(d, self.bma)) == 0
 
+    def get_points(self):
+        return Point(self.a), Point(self.b)
+
     def plot(self, **kwargs):
         a = np.array(self.a).flatten().astype(float)
         b = np.array(self.b).flatten().astype(float)

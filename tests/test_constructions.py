@@ -27,6 +27,11 @@ def random_point(*args, **kwargs):
     p = cn.Point(m)
     return p
 
+def random_line(*args, **kwargs):
+    a = random_point(*args, **kwargs)
+    b = random_point(*args, **kwargs)
+    return cn.Line(a, b)
+
 def random_rotation(rng, cos_lo=-1, cos_hi=1, denom_lo=50, denom_hi=100):
     c = random_rational(rng, cos_lo, cos_hi, denom_lo, denom_hi)
     s = sp.sqrt(1 - c*c)
@@ -72,16 +77,16 @@ def test_line_contains_point(seed):
     rng = util.Seeder().get_rng(test_name)
     printer = util.Printer(test_name, RESULTS_DIR)
 
-    a, b = [random_point(rng) for _ in range(2)]
-    line = cn.Line(a, b)
+    line = random_line(rng)
     alpha = random_rational(rng, 1.1, 1.9)
-    c = cn.Point(a.coords + alpha * line.bma)
+    c = cn.Point(line.a + alpha * line.bma)
     assert line.contains_point(c)
 
     r = random_rotation(rng, cos_lo=0.1, cos_hi=0.3)
-    d = cn.Point(a.coords + alpha * (r * line.bma))
+    d = cn.Point(line.a + alpha * (r * line.bma))
     assert not line.contains_point(d)
 
+    a, b = line.get_points()
     printer(a, b, c, d, alpha, r, sep="\n")
     plotting.plot(
         *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, d]],
@@ -98,11 +103,10 @@ def test_line_project_point(seed):
     rng = util.Seeder().get_rng(test_name)
     printer = util.Printer(test_name, RESULTS_DIR)
 
-    a, b = [random_point(rng) for _ in range(2)]
-    line = cn.Line(a, b)
+    line = random_line(rng)
     alpha = random_rational(rng, 1.1, 1.9)
     r = random_rotation(rng, cos_lo=0.3, cos_hi=0.6)
-    c = cn.Point(a.coords + alpha * (r * line.bma))
+    c = cn.Point(line.a + alpha * (r * line.bma))
     m = line.project_point(c)
 
     assert line.contains_point(m)
@@ -113,6 +117,7 @@ def test_line_project_point(seed):
 
     assert line.is_direction_orthogonal(m.coords - c.coords)
 
+    a, b = line.get_points()
     printer(a, b, line, alpha, r, c, m, eps, sep="\n")
     plotting.plot(
         *[p.plot(c="r", s=100, zorder=20) for p in [a, b, c, m]],
