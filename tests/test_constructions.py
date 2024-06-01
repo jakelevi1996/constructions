@@ -67,6 +67,23 @@ def test_valid_line():
 
     printer(a, b, r, c, line, sep="\n")
 
+def test_valid_circle():
+    rng = util.Seeder().get_rng("test_valid_circle")
+    printer = util.Printer("test_valid_circle", RESULTS_DIR)
+
+    a = random_point(rng)
+    r_sq = sum_sqrt(2, 3) - sqrt_sq_sum_sqrt(2, 3)
+
+    assert r_sq != 0
+    assert sp.simplify(r_sq) == 0
+
+    with pytest.raises(ValueError):
+        circle = cn.Circle(a, r_sq)
+
+    circle = cn.Circle(a, random_rational(rng, 1.1, 1.9))
+
+    printer(a, r_sq, circle, sep="\n")
+
 def test_plot():
     rng = util.Seeder().get_rng("test_plot")
     a, b, c, d = [random_point(rng) for _ in range(4)]

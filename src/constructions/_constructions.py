@@ -63,7 +63,9 @@ class Line:
 class Circle:
     def __init__(self, centre_point, r_sq):
         self.centre = centre_point.coords
-        self.r_sq = r_sq
+        self.r_sq = sp.simplify(r_sq)
+        if self.r_sq <= 0:
+            raise ValueError("`r_sq` must be > 0, received %s" % self.r_sq)
 
     def contains_point(self, point):
         centre_distance = Point(self.centre).l2_sq_distance(point)
