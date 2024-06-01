@@ -30,7 +30,12 @@ class Line:
         self.a = a_point.coords
         self.b = b_point.coords
         self.bma = self.b - self.a
-        self.bma_l2_sq = l2_sq(self.bma)
+        self.bma_l2_sq = sp.simplify(l2_sq(self.bma))
+        if self.bma_l2_sq == 0:
+            raise ValueError(
+                "Input points %s and %s must not be equal"
+                % (a_point, b_point)
+            )
 
     def project_point(self, point):
         alpha = dot(point.coords - self.a, self.bma) / self.bma_l2_sq

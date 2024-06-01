@@ -38,6 +38,35 @@ def random_rotation(rng, cos_lo=-1, cos_hi=1, denom_lo=50, denom_hi=100):
     r = sp.Matrix([[c, -s], [s, c]])
     return r
 
+def sum_sqrt(a, b):
+    return sp.sqrt(a) + sp.sqrt(b)
+
+def sqrt_sq_sum_sqrt(a, b):
+    return sp.sqrt(a + b + 2*sp.sqrt(a*b))
+
+def test_valid_line():
+    rng = util.Seeder().get_rng("test_valid_line")
+    printer = util.Printer("test_valid_line", RESULTS_DIR)
+    a_coords = [
+        sum_sqrt(2, 3),
+        sqrt_sq_sum_sqrt(5, 7),
+    ]
+    b_coords = [
+        sqrt_sq_sum_sqrt(2, 3),
+        sum_sqrt(5, 7),
+    ]
+    a = cn.Point(sp.Matrix(a_coords))
+    b = cn.Point(sp.Matrix(b_coords))
+
+    with pytest.raises(ValueError):
+        line = cn.Line(a, b)
+
+    r = random_rotation(rng, cos_lo=0.3, cos_hi=0.6)
+    c = cn.Point(r * b.coords)
+    line = cn.Line(a, c)
+
+    printer(a, b, r, c, line, sep="\n")
+
 def test_plot():
     rng = util.Seeder().get_rng("test_plot")
     a, b, c, d = [random_point(rng) for _ in range(4)]
