@@ -321,7 +321,11 @@ def test_circle_get_intersection_circle(seed):
     assert len(num_x) == len(x)
     assert all(num_xi == len(xi) for num_xi, xi in zip(num_x, x))
     assert all(c1.contains_point(xii) for xi in x for xii in xi)
-    assert all(c2.contains_point(xii) for xi, c2 in zip(x, c2_list) for xii in xi)
+    assert all(
+        c2.contains_point(xii)
+        for xi, c2 in zip(x, c2_list)
+        for xii in xi
+    )
 
     plotting.plot(
         c1.plot(c="b"),
