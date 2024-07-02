@@ -13,8 +13,8 @@ util.numpy_set_print_options()
 
 def random_rational(rng, lo=-1, hi=1, denom_lo=50, denom_hi=100):
     denom = rng.integers(denom_lo, denom_hi)
-    num_lo = math.ceil( denom * lo)
-    num_hi = math.floor(denom * hi)
+    num_lo = math.ceil( denom * lo) + 1
+    num_hi = math.floor(denom * hi) - 1
     num = rng.integers(num_lo, num_hi)
     rational = sp.Rational(num, denom)
     assert (lo <= rational) and (rational <= hi)
