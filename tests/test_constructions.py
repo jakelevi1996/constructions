@@ -288,6 +288,56 @@ def test_line_get_intersection_circle(seed):
     printer(line, *circles, *x, sep="\n\n")
 
 @pytest.mark.parametrize("seed", range(3))
+def test_circle_get_intersection_circle(seed):
+    test_name = "test_circle_get_intersection_circle_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    p1 = random_point(rng)
+    p2 = random_point(rng)
+    d = sp.sqrt(p1.l2_sq_distance(p2))
+    r1 = random_rational(rng, 0.4, 0.6) * d
+    c1 = cn.Circle(p1, r1*r1)
+    r2_list = [
+        random_rational(rng, 0.4, 0.6) * (d - r1),
+        (d - r1),
+        random_rational(rng, (d - r1), d),
+        d,
+        random_rational(rng, d, 0.9*(d + r1)),
+        random_rational(rng, 0.9, 1) * (d + r1),
+        (d + r1),
+        random_rational(rng, 1.2, 1.4) * (d + r1),
+    ]
+    c2_list = [
+        cn.Circle(p2, r2*r2)
+        for r2 in r2_list
+    ]
+    x = [
+        c1.get_intersection_circle(c2) for c2 in c2_list
+    ]
+    p3 = cn.Point(p2.coords + r2_list[-1] * (p1.coords - p2.coords) / d)
+
+    num_x = [0, 1, 2, 2, 2, 2, 1, 0,]
+    assert len(num_x) == len(x)
+    assert all(num_xi == len(xi) for num_xi, xi in zip(num_x, x))
+    assert all(c1.contains_point(xii) for xi in x for xii in xi)
+    assert all(c2.contains_point(xii) for xi, c2 in zip(x, c2_list) for xii in xi)
+
+    plotting.plot(
+        c1.plot(c="b"),
+        *[c2.plot(c="m") for c2 in c2_list],
+        *[xii.plot(c="r", s=100, zorder=20) for xi in x for xii in xi],
+        p1.plot(c="g"),
+        p2.plot(c="g"),
+        p3.plot(c="c"),
+        axis_equal=True,
+        grid=False,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
+    printer(c1, *c2_list, *x, sep="\n\n")
+
+@pytest.mark.parametrize("seed", range(3))
 def test_circle_contains_point(seed):
     test_name = "test_circle_contains_point_%i" % seed
     rng = util.Seeder().get_rng(test_name)
