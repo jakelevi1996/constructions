@@ -4,6 +4,9 @@ from jutility import plotting
 
 ROTATE_90 = sp.Matrix([[0, -1], [1, 0]])
 
+P_ONE = sp.Matrix([ 1, 0])
+N_ONE = sp.Matrix([-1, 0])
+
 def dot(x, y):
     [z] = x.T * y
     return z
@@ -44,6 +47,10 @@ class Line:
                 "Input points %s and %s must not be equal"
                 % (a_point, b_point)
             )
+        self.id = (
+            self.project_point(Point(P_ONE)),
+            self.project_point(Point(N_ONE)),
+        )
 
     def project_point(self, point):
         alpha = dot(point.coords - self.a, self.bma) / self.bma_l2_sq
@@ -94,6 +101,12 @@ class Line:
 
     def __repr__(self):
         return "Line(through=[%s and %s])" % (tuple(self.a), tuple(self.b))
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other_line):
+        return self.id == other_line.id
 
 class Circle:
     def __init__(self, centre_point, r_sq):
