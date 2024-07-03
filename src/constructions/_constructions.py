@@ -16,7 +16,7 @@ def l2(x):
 
 class Point:
     def __init__(self, coords_matrix):
-        self.coords = coords_matrix
+        self.coords = sp.simplify(coords_matrix)
 
     def l2_sq_distance(self, other_point):
         return l2_sq(other_point.coords - self.coords)
@@ -26,6 +26,12 @@ class Point:
 
     def __repr__(self):
         return "Point(%s, %s)" % tuple(self.coords)
+
+    def __hash__(self):
+        return hash(self.coords.evalf())
+
+    def __eq__(self, other_point):
+        return sp.simplify(self.l2_sq_distance(other_point)) == 0
 
 class Line:
     def __init__(self, a_point, b_point):
