@@ -383,6 +383,9 @@ def test_point_set(seed):
     a = cn.Point(sp.Matrix(a_coords))
     b = cn.Point(sp.Matrix(b_coords))
 
+    assert a == b
+    assert a != random_point(rng)
+
     s = set([a, b])
 
     assert len(s) == 1
