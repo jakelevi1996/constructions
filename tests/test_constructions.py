@@ -365,3 +365,53 @@ def test_circle_contains_point(seed):
         plot_name=test_name,
         dir_name=RESULTS_DIR,
     )
+
+@pytest.mark.parametrize("seed", range(3))
+def test_point_set(seed):
+    test_name = "test_point_set_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    a_coords = [
+        sum_sqrt(2, 3),
+        sqrt_sq_sum_sqrt(5, 7),
+    ]
+    b_coords = [
+        sqrt_sq_sum_sqrt(2, 3),
+        sum_sqrt(5, 7),
+    ]
+    a = cn.Point(sp.Matrix(a_coords))
+    b = cn.Point(sp.Matrix(b_coords))
+
+    s = set([a, b])
+
+    assert len(s) == 1
+
+    printer(a, b, s, len(s), sep="\n\n")
+
+    p1 = random_point(rng)
+    p2 = random_point(rng)
+    d = sp.sqrt(p1.l2_sq_distance(p2))
+    r1 = random_rational(rng, 0.4, 0.6) * d
+    r2 = random_rational(rng, (d - r1), (d + r1))
+    c1 = cn.Circle(p1, r1*r1)
+    c2 = cn.Circle(p2, r2*r2)
+    x = c1.get_intersection_circle(c2) + c2.get_intersection_circle(c1)
+    s = set(x)
+
+    assert len(x) == 4
+    assert len(s) == 2
+
+    plotting.plot(
+        c1.plot(c="b"),
+        c2.plot(c="b"),
+        *[xi.plot(c="r", s=100, zorder=20) for xi in x],
+        p1.plot(c="g"),
+        p2.plot(c="g"),
+        axis_equal=True,
+        grid=False,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
+
+    printer(c1, c2, x, s, len(s), sep="\n\n")
