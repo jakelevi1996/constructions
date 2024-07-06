@@ -418,3 +418,38 @@ def test_point_set(seed):
     )
 
     printer(c1, c2, x, s, len(s), sep="\n\n")
+
+@pytest.mark.parametrize("seed", range(3))
+def test_line_set(seed):
+    test_name = "test_line_set_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    s1 = random_line(rng)
+    s2 = random_line(rng)
+    p1, p2 = s2.get_points()
+    p1_proj = s1.project_point(p1)
+    p2_proj = s1.project_point(p2)
+    s3 = cn.Line(p1_proj, p2_proj)
+
+    assert s1 != s2
+    assert s1 == s3
+    assert len(set([s1]))           == 1
+    assert len(set([s1, s2]))       == 2
+    assert len(set([s1, s3]))       == 1
+    assert len(set([s1, s2, s3]))   == 2
+
+    plotting.plot(
+        s1.plot(),
+        s2.plot(),
+        s3.plot(lw=20, z=0, alpha=0.5, c="g"),
+        cn.Line(p1, p1_proj).plot(c="g"),
+        cn.Line(p2, p2_proj).plot(c="g"),
+        *[p.plot(c="r", z=20, s=80) for p in [p1, p2, p1_proj, p2_proj]],
+        *[p.plot(c="b", z=20, s=80) for p in s1.get_points()],
+        axis_equal=True,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
+
+    printer(s1, s2, s3, p1, p2, p1_proj, p2_proj, sep="\n\n")
