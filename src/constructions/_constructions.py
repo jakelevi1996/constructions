@@ -143,3 +143,13 @@ class Circle:
     def __repr__(self):
         r = sp.sqrt(self.r_sq)
         return "Circle(centre=%s, r=%s)" % (tuple(self.centre.coords), r)
+
+    def __hash__(self):
+        id_tuple = (self.centre, self.r_sq.evalf())
+        return hash(id_tuple)
+
+    def __eq__(self, other_circle):
+        return (
+            (self.centre == other_circle.centre)
+            and (sp.simplify(self.r_sq - other_circle.r_sq) == 0)
+        )
