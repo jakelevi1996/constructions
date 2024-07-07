@@ -38,6 +38,22 @@ def random_rotation(rng, cos_lo=-1, cos_hi=1, denom_lo=50, denom_hi=100):
     r = sp.Matrix([[c, -s], [s, c]])
     return r
 
+def perpendicular_bisector(p1, p2):
+    # m1 = (p1.coords + p2.coords) / 2
+    # m2 = m1 + cn.ROTATE_90 * (m1 - p1.coords)
+    # return cn.Line(cn.Point(m1), cn.Point(m2))
+    r_sq = p1.l2_sq_distance(p2)
+    c1 = cn.Circle(p1, r_sq)
+    c2 = cn.Circle(p2, r_sq)
+    return cn.Line(*c1.get_intersection_circle(c2))
+
+def circle_from_points(p1, p2, p3):
+    s1 = perpendicular_bisector(p1, p2)
+    s2 = perpendicular_bisector(p1, p3)
+    [m] = s1.get_intersection_line(s2)
+    r_sq = m.l2_sq_distance(p1)
+    return cn.Circle(m, r_sq)
+
 def sum_sqrt(a, b):
     return sp.sqrt(a) + sp.sqrt(b)
 
@@ -448,8 +464,58 @@ def test_line_set(seed):
         *[p.plot(c="r", z=20, s=80) for p in [p1, p2, p1_proj, p2_proj]],
         *[p.plot(c="b", z=20, s=80) for p in s1.get_points()],
         axis_equal=True,
+        grid=False,
         plot_name=test_name,
         dir_name=RESULTS_DIR,
     )
 
     printer(s1, s2, s3, p1, p2, p1_proj, p2_proj, sep="\n\n")
+
+@pytest.mark.parametrize("seed", range(3))
+def test_circle_set(seed):
+    test_name = "test_circle_set_%i" % seed
+    rng = util.Seeder().get_rng(test_name)
+    printer = util.Printer(test_name, RESULTS_DIR)
+
+    s1 = random_line(rng)
+    s2 = random_line(rng)
+    p1 = random_point(rng)
+    min_r2_sq = max(
+        p1.l2_sq_distance(s1.project_point(p1)),
+        p1.l2_sq_distance(s2.project_point(p1)),
+    )
+    r_sq = random_rational(rng, 1.2, 1.4) * min_r2_sq
+    c1 = cn.Circle(p1, r_sq)
+    p2, p3 = s1.get_intersection_circle(c1)
+    p4, p5 = s2.get_intersection_circle(c1)
+    c2 = circle_from_points(p2, p3, p4)
+    c3 = circle_from_points(p5, p3, p4)
+
+    assert c1 == c2
+    assert c1 == c3
+    assert c2 == c3
+    assert len(set([c1, c2, c3])) == 1
+
+    c4 = cn.Circle(random_point(rng), random_rational(rng, 1, 2))
+
+    assert c4 != c1
+    assert c4 != c2
+    assert c4 != c3
+    assert len(set([c1, c2, c3, c4])) == 2
+
+    plotting.plot(
+        s1.plot(),
+        s2.plot(),
+        *[p.plot(c="g", z=20, s=80) for p in [p1, p2, p3, p4, p5]],
+        c1.plot(),
+        c2.plot(lw=20, z=0, alpha=0.25, c="m"),
+        c3.plot(lw=40, z=0, alpha=0.25, c="m"),
+        perpendicular_bisector(p2, p3).plot(c="r"),
+        perpendicular_bisector(p4, p5).plot(c="r"),
+        axis_equal=True,
+        grid=False,
+        plot_name=test_name,
+        dir_name=RESULTS_DIR,
+    )
+
+    printer(c1, c2, c3, c4, p1, p2, p3, p4, p5, sep="\n\n")
