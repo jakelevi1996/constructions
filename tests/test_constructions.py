@@ -39,13 +39,9 @@ def random_rotation(rng, cos_lo=-1, cos_hi=1, denom_lo=50, denom_hi=100):
     return r
 
 def perpendicular_bisector(p1, p2):
-    # m1 = (p1.coords + p2.coords) / 2
-    # m2 = m1 + cn.ROTATE_90 * (m1 - p1.coords)
-    # return cn.Line(cn.Point(m1), cn.Point(m2))
-    r_sq = p1.l2_sq_distance(p2)
-    c1 = cn.Circle(p1, r_sq)
-    c2 = cn.Circle(p2, r_sq)
-    return cn.Line(*c1.get_intersection_circle(c2))
+    m1 = (p1.coords + p2.coords) / 2
+    m2 = m1 + cn.ROTATE_90 * (m1 - p1.coords)
+    return cn.Line(cn.Point(m1), cn.Point(m2))
 
 def circle_from_points(p1, p2, p3):
     s1 = perpendicular_bisector(p1, p2)
