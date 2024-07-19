@@ -1,5 +1,4 @@
 import sympy as sp
-import numpy as np
 from sympy.matrices.dense import DenseMatrix
 from sympy.matrices.immutable import ImmutableDenseMatrix
 from jutility import plotting
@@ -97,9 +96,11 @@ class Line:
         return Point(self.a), Point(self.b)
 
     def plot(self, **kwargs):
-        a = np.array(self.a).flatten().astype(float)
-        b = np.array(self.b).flatten().astype(float)
-        return plotting.AxLine(a, b, **kwargs)
+        a1, a2 = self.a
+        b1, b2 = self.b
+        a_coords = [float(a1), float(a2)]
+        b_coords = [float(b1), float(b2)]
+        return plotting.AxLine(a_coords, b_coords, **kwargs)
 
     def __repr__(self):
         return "Line(through=[%s and %s])" % (tuple(self.a), tuple(self.b))
