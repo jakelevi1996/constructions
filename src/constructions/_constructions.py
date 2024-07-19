@@ -1,5 +1,7 @@
 import sympy as sp
 import numpy as np
+from sympy.matrices.dense import DenseMatrix
+from sympy.matrices.immutable import ImmutableDenseMatrix
 from jutility import plotting
 
 ROTATE_90 = sp.Matrix([[0, -1], [1, 0]])
@@ -7,21 +9,21 @@ ROTATE_90 = sp.Matrix([[0, -1], [1, 0]])
 P_ONE = sp.Matrix([ 1, 0])
 N_ONE = sp.Matrix([-1, 0])
 
-def dot(x, y):
+def dot(x: DenseMatrix, y: DenseMatrix):
     [z] = x.T * y
     return z
 
-def l2_sq(x):
+def l2_sq(x: DenseMatrix):
     return dot(x, x)
 
-def l2(x):
+def l2(x: DenseMatrix):
     return sp.sqrt(dot(x, x))
 
 class Point:
-    def __init__(self, coords_matrix):
-        self.coords = sp.simplify(coords_matrix)
+    def __init__(self, coords_matrix: DenseMatrix):
+        self.coords: ImmutableDenseMatrix = sp.simplify(coords_matrix)
 
-    def l2_sq_distance(self, other_point):
+    def l2_sq_distance(self, other_point: "Point"):
         return l2_sq(other_point.coords - self.coords)
 
     def plot(self, **kwargs):
@@ -33,11 +35,11 @@ class Point:
     def __hash__(self):
         return hash(self.coords.evalf())
 
-    def __eq__(self, other_point):
+    def __eq__(self, other_point: "Point"):
         return sp.simplify(self.l2_sq_distance(other_point)) == 0
 
 class Line:
-    def __init__(self, a_point, b_point):
+    def __init__(self, a_point: Point, b_point: Point):
         self.a = a_point.coords
         self.b = b_point.coords
         self.bma = self.b - self.a
@@ -52,33 +54,33 @@ class Line:
             self.project_point(Point(N_ONE)),
         )
 
-    def project_point(self, point):
+    def project_point(self, point: Point):
         alpha = dot(point.coords - self.a, self.bma) / self.bma_l2_sq
         return Point(self.a + alpha * self.bma)
 
-    def contains_point(self, point):
+    def contains_point(self, point: Point):
         m = self.project_point(point)
         return sp.simplify(m.l2_sq_distance(point)) == 0
 
-    def is_direction_orthogonal(self, d):
+    def is_direction_orthogonal(self, d: DenseMatrix):
         return sp.simplify(dot(d, self.bma)) == 0
 
-    def get_direction_orthogonal_component(self, d):
+    def get_direction_orthogonal_component(self, d: DenseMatrix):
         alpha = dot(d, self.bma) / self.bma_l2_sq
         return d - alpha * self.bma
 
-    def is_line_parallel(self, line):
+    def is_line_parallel(self, line: "Line"):
         x = self.get_direction_orthogonal_component(line.bma)
         return sp.simplify(l2_sq(x)) == 0
 
-    def get_intersection_line(self, line):
+    def get_intersection_line(self, line: "Line"):
         if self.is_line_parallel(line):
             return []
 
         alpha, _ = sp.Matrix([[self.bma, line.bma]]).solve(line.a - self.a)
         return [Point(self.a + alpha * self.bma)]
 
-    def get_intersection_circle(self, circle):
+    def get_intersection_circle(self, circle: "Circle"):
         m = self.project_point(circle.centre)
         alpha = (
             (circle.r_sq - m.l2_sq_distance(circle.centre)) / self.bma_l2_sq
@@ -105,21 +107,21 @@ class Line:
     def __hash__(self):
         return hash(self.id)
 
-    def __eq__(self, other_line):
+    def __eq__(self, other_line: "Line"):
         return self.id == other_line.id
 
 class Circle:
-    def __init__(self, centre_point, r_sq):
+    def __init__(self, centre_point: Point, r_sq):
         self.centre = centre_point
         self.r_sq = sp.simplify(r_sq)
         if self.r_sq <= 0:
             raise ValueError("`r_sq` must be > 0, received %s" % self.r_sq)
 
-    def contains_point(self, point):
+    def contains_point(self, point: Point):
         centre_distance = self.centre.l2_sq_distance(point)
         return sp.simplify(centre_distance - self.r_sq) == 0
 
-    def get_intersection_circle(self, circle):
+    def get_intersection_circle(self, circle: "Circle"):
         centre_disp = circle.centre.coords - self.centre.coords
         cd_l2_sq = sp.simplify(l2_sq(centre_disp))
         if cd_l2_sq == 0:
@@ -148,7 +150,7 @@ class Circle:
         id_tuple = (self.centre, self.r_sq.evalf())
         return hash(id_tuple)
 
-    def __eq__(self, other_circle):
+    def __eq__(self, other_circle: "Circle"):
         return (
             (self.centre == other_circle.centre)
             and (sp.simplify(self.r_sq - other_circle.r_sq) == 0)
